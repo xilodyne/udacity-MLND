@@ -12136,6 +12136,7 @@ Initially it seemed that the predicted values didn't match but were within a ran
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong> 
 Using a testing set from the same dataset as the training data allows a quick method for determining if the model is reaching a high accuracy / performance metric.  As the testing and training data should be similiar if the scores are low it can imply that the model is not correct.</p>
+<p>Another advantage in splitting the dataset into training and testing sets is that the testing set is independent of the training set.  That is the testing data, while related to the training data is different data, and thus when applied gives a more accurate assessment of the model.  If the data set was not split and instead the testing data is extracted from the training data, then the data is "over fitted" and the model will produce a very high false accuracy as the testing data is an exact match of the training data.</p>
 
 </div>
 </div>
@@ -13821,7 +13822,8 @@ QmCC
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong> 
-Looking at max_depth=10 shows that training data set will never reach an accuracy higher than 60% (it reaches that at 50 data points and remains at the same accuracy at 350 data points).  The training data reaches &gt;99% at 350 data points, changing little from the first data point.</p>
+The learning curve graphs for max_depth=10 shows two dataset plots:  training and testing.  The graph is used to calculate the coefficient of determination, R^2, or the variance (i.e. score; or the y-axis) vs the quantity of training points (i.e. training points; x-axis).  The graph show that with a high max depth the training data starts at 100% and maintains this score consistently (losing approximately 1% at 350 data points.)  The testing plot shows almost a vertical line from 0 to 50 data points and then a plateau of the graph (it looks like the graphs varies from 60% to 70% and back to 65% by data point 350).  For both graphs the addition of more data points is not likely to have any substantial change to the score.</p>
+<p>The graph of the two sets (training and testing) show that the testing set, despite a high max_depth and 350 data points will never reach the score of the training set, remaining a distance of about 35% from the training set.  Looking at this graph I would assume that it would be better to choose a lower max_depth (thus less computation time) that has a lower score and would bring the plot data closer to the testing data plots.</p>
 
 </div>
 </div>
@@ -14557,7 +14559,7 @@ IiI6WMJaRERERAdLWIuIiIjoYAlrERERER0sYS0iIiKig/0Pz/Rpoqyv4s8AAAAASUVORK5CYII=
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong> 
-At max_depth=1 the model suffers from high bias (converging training/testing scores, less accurate).  At max_depth=10 the model suffers from high variance (large gap between training/testing scores, accurate training scores, less accurate testing scores).</p>
+At max_depth=1 the model suffers from high bias (converging training/testing scores, poor training performance).  At max_depth=10 the model suffers from high variance (large gap between training/testing scores, good training performance, litte change in testing performance since max_depth=3).</p>
 <p>The complexity performance curves for both training and testing are similiar in shape in the beginning but diverge about max_depth=4 (training continutes to gain a higher score compared to testing).  At the end the gap between training and testing is about 25% while at the beginning is it is +/- 10%, as the testing green shaded area, the uncertainity range, encompass the training curve but extends well below the training curve.</p>
 
 </div>
@@ -14612,6 +14614,7 @@ As the amount of data is less than 350 points there is not much of a computation
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong> 
 The grid search technique allows a range of parameter combinations within a dataset model to be checked programmatically, rather than trying each combination individually.  By allowing the grid search technique to be applied to a learning algorithm it is possible for the software to determine the best performance metric of the available parameters.</p>
+<p>The Python sklearn GridSearchCV routine will accept an estimator, a range of paramenters to check, and a scorer function. It will then iterate over each parameter using k-fold cross-valiation.  For each iteration the estimator score is tabulated by the scorer function, which will return the best estimator score when the search is completed.</p>
 
 </div>
 </div>
@@ -14633,8 +14636,8 @@ The grid search technique allows a range of parameter combinations within a data
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong> 
-The k-fold cv training technique allows the complete data set to be used for both training and testing scores.  The "k" is the number of splits of the dataset, iterating k times over the dataset until each split has been used.  Each split is used as testing data while the remaining data is used a training data.  All iteration results are averaged together.</p>
-<p>The advantage of using k-fold cv gives confidence in a grid search model that a comparison of performance measures are a valid comparison as all data has been used as both training and testing for each grid search.</p>
+The k-fold cv training technique allows the complete data set to be used for both training and testing scores.  The "k" is the number of bins that the dataset is split into.  1 bin will be used for testing, the other bins for training.  k is also the number of times the data will be iterated to make sure each testing bin is used.  The data is iterated so that at each iteration a different bin is used for testing (thus all the data is used for testing by the end of the routine) and each accuracy result is recorded.  When the routine is complete an accuracy score is given of the average of all the testing results.</p>
+<p>The advantage of using k-fold cv gives confidence in a grid search model that a comparison of performance measures are a valid comparison as all data has been used as both training and testing for each grid search.  If k-fold is not used, and only cv, the risk is that data may be structured or ordered so the section used for testing have very very similiar data in the training set, thus decreasing the accuracy.  By using k-fold this risk is eliminated.</p>
 
 </div>
 </div>
